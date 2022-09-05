@@ -435,9 +435,150 @@ let oldElapsedTime=null;
 const clock = new THREE.Clock()
 let previousTime = 0
 
-const tick = () =>   
-{
+const tick = () =>
 
+
+// world.step(1 / 60, deltaTime, 3)
+// let count = mask.children[1].geometry.attributes.position.count
+// for(let i=0; i<count; i++){
+// const x = mask.children[1].geometry.attributes.position.getX(i);
+// const xsin = Math.sin(x+elapsedTime)
+// mask.children[1].geometry.attributes.position.setZ(i, xsin)
+// }
+// mask.children[1].geometry.attributes.position.needsUpdate = true;
+
+   
+{
+  
+    if(mask2){
+mask2.rotation.y+=.001
+// mask2.rotation.x+=.001
+
+    }
+
+
+    
+
+
+    for(const object of objectsToUpdate)
+    {
+   
+    }
+    
+    const elapsedTime = clock.getElapsedTime()
+    const deltaTime = elapsedTime - oldElapsedTime
+    oldElapsedTime = elapsedTime
+
+    world.step(1 / 60, deltaTime, 3)
+    
+    if(mask2&&potMesh){
+    
+        // mask2.rotation.y+=.001
+    let count = mask2.geometry.attributes.position.count
+
+    for(let i=0; i<count; i++){
+    // if(mask2.geometry.attributes.position.getY(i)>mouse.y*4-.65&&mask2.geometry.attributes.position.getY(i)<mouse.y*4+.65&&mask2.geometry.attributes.position.getX(i)<6){
+        if(mask2.geometry.attributes.position.getY(i)<mouse.y*4){
+
+        // console.log(mouse.y)
+        // console.log(mask2.geometry.attributes.position.getY(i))
+        
+        let Xposition = mask2.geometry.attributes.position.getX(i)+.1
+        let flow = "on"
+        if(mask2.geometry.attributes.position.getX(i)<6&&mask2.geometry.attributes.position.getX(i)!==potMesh.geometry.attributes.position.getX(i)){
+        mask2.geometry.attributes.position.setX(i, Xposition)   
+        mask2.geometry.attributes.color.array[i*3]+=.02
+        mask2.geometry.attributes.color.array[i*3+1]+=.02
+        mask2.geometry.attributes.color.array[i*3+2]+=.02
+        }
+        else if(mask2.geometry.attributes.position.getX(i)>6){
+            mask2.geometry.attributes.position.setX(i, potMesh.geometry.attributes.position.getX(i))
+            mask2.geometry.attributes.position.setY(i, potMesh.geometry.attributes.position.getY(i))
+            mask2.geometry.attributes.position.setZ(i, potMesh.geometry.attributes.position.getZ(i))
+            mask2.geometry.attributes.color.array[i*3]=potColors[i*3]
+            mask2.geometry.attributes.color.array[i*3+1]=potColors[i*3+1]
+            mask2.geometry.attributes.color.array[i*3+2]=potColors[i*3+2]
+            }
+
+            
+        
+        
+            
+
+
+
+        
+        // console.log(mask2.geometry.attributes.color)
+
+        
+    }
+    else{
+        // mask2.geometry.attributes.position.setX(i, mask2backup.geometry.attributes.position.getX(i))
+        // mask2.geometry.attributes.position.setY(i, mask2backup.geometry.attributes.position.getY(i))
+        // mask2.geometry.attributes.position.setZ(i, mask2backup.geometry.attributes.position.getZ(i))
+        // if(display=="pot"){
+        //  mask2.geometry.attributes.position.setX(i, potMesh.geometry.attributes.position.getX(i))
+        //     mask2.geometry.attributes.position.setY(i, potMesh.geometry.attributes.position.getY(i))
+        //     mask2.geometry.attributes.position.setZ(i, potMesh.geometry.attributes.position.getZ(i))
+          
+        // }
+
+        // else{
+        mask2.geometry.attributes.position.setX(i, mask2backup.geometry.attributes.position.getX(i))
+        mask2.geometry.attributes.position.setY(i, mask2backup.geometry.attributes.position.getY(i))
+        mask2.geometry.attributes.position.setZ(i, mask2backup.geometry.attributes.position.getZ(i))
+
+        // }
+        // if(mask2.geometry.attributes.color.array[i*3]>0){
+            mask2.geometry.attributes.color.array[i*3]=backupcolors[i*3]
+            mask2.geometry.attributes.color.array[i*3+1]=backupcolors[i*3+1]
+            mask2.geometry.attributes.color.array[i*3+2]=backupcolors[i*3+2]
+
+        // }
+      
+    };
+   
+   
+}
+
+
+    
+mask2.geometry.attributes.position.needsUpdate = true;
+mask2backup.geometry.attributes.position.needsUpdate = true;
+mask2.geometry.attributes.color.needsUpdate=true;
+backupcolors.update=true
+potColors.update=true
+}
+    
+    
+
+
+
+   
+
+
+    // if(box != null){
+    // const intersects = raycaster.intersectObject(box.children[0].children[0])
+    
+
+
+    // if(intersects.length>0){
+
+    //       box.children[0].children[1].children[0].material.color.set("yellow")
+    //       console.log(intersects)
+          
+            
+    //     }
+    // else{
+
+        
+    //     box.children[0].children[1].children[0].material.color.set("violet")
+
+
+    // }
+
+
+    // }
 
   
 
