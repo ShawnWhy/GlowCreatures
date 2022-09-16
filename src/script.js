@@ -11,6 +11,8 @@ import $ from "./Jquery"
 
 let selectedObject
 let selectedModel
+let selectedDot
+let selectChildIndex
 
 const textureLoader = new THREE.TextureLoader()
 
@@ -61,7 +63,7 @@ window.addEventListener('resize', () =>
 const randomColors = [new THREE.Color("orange"), new THREE.Color("AFFF33"), new THREE.Color( "33BEFF"), new THREE.Color("3C21A9")]
 
 const selectMaterial = new THREE.MeshStandardMaterial({color:'orange'})
-const selectMaterial2 = new THREE.MeshStandardMaterial({color:'blue'})
+const selectMaterial2 = new THREE.MeshStandardMaterial({color:'yellow'})
 
 
 
@@ -78,12 +80,14 @@ let bird
 let birdMixer
 let birdFlight
 let birdModel
+let birdDots
 let currentObject
 
 let whale
 let whaleMixer
 let whaleSwim
 let whaleModel
+let whaleDots
 let activation = "off"
 let activation2 = "off"
 let activation3 = "off"
@@ -100,14 +104,19 @@ $(".button").click((e)=>{
         if(whale){
             selectedObject = whale.children[0].children[4].children;
             selectedModel = whaleModel.children[0].children[4].children;
-            console.log(selectedModel)
-            console.log(selectedObject)
+            selectedDot = whaleDots;
+            selectChildIndex = 1
+            // console.log(selectedModel)
+            // console.log(selectedObject)
             scene.add(whale)
+            scene.add(whaleDots)
             if(bull){
                 scene.remove(bull)
+                scene.remove(bullDots)
             }
             if(bird){
                 scene.remove(bird)
+                scene.remove(birdDots)
             }
 
         }
@@ -118,12 +127,17 @@ $(".button").click((e)=>{
         if(bull){
             selectedObject = bull.children[0].children[4].children;
             selectedModel = bullModel.children[0].children[4].children;
+            selectedDot = bullDots;
+            selectChildIndex = 1;
             scene.add(bull)
+            scene.add(bullDots)
             if(whale){
                 scene.remove(whale)
+                scene.remove(whaleDots)
             }
             if(bird){
                 scene.remove(bird)
+                scene.remove(birdDots)
             }
 
         }
@@ -132,16 +146,21 @@ $(".button").click((e)=>{
     case "birdButton":
         if(bird){
             scene.add(bird)
+            scene.add(birdDots)
             selectedObject = bird.children[0].children[3].children;
             selectedModel = birdModel.children[0].children[3].children;
-            console.log(selectedModel)
-            console.log(selectedObject)
+            selectedDot=birdDots
+            selectChildIndex = 0
+            // console.log(selectedModel)
+            // console.log(selectedObject)
 
             if(bull){
                 scene.remove(bull)
+                scene.remove(bullDots)
             }
             if(whale){
                 scene.remove(whale)
+                scene.remove(whaleDots)
             }
 
         }
@@ -362,9 +381,7 @@ gltfLoader.load(
         
         let bullDotCoordinates = bull.children[0].children[4].children[1].geometry.attributes.position.array;
 
-        let bullDotCoordinates2 = bull.children[0].children[4].children[0].geometry.attributes.position.array;
-
-        
+        // let bullDotCoordinates2 = bull.children[0].children[4].children[0].geometry.attributes.position.array;
 
         //createbulldots 
         const bullDotColors = new Float32Array(bullDotCoordinates.length * 3)
@@ -398,21 +415,21 @@ gltfLoader.load(
         vertexColors: true
     })
 
-    let bullDotsGeometry2 = new THREE.BufferGeometry;
+    // let bullDotsGeometry2 = new THREE.BufferGeometry;
         
-    bullDotsGeometry2.setAttribute(
-        'position',
-        new THREE.BufferAttribute(bullDotCoordinates2,3)
-    )
-    bullDotsGeometry2.setAttribute(
-        'color',
-        new THREE.BufferAttribute(bullDotColors,3)
-    )
+    // bullDotsGeometry2.setAttribute(
+    //     'position',
+    //     new THREE.BufferAttribute(bullDotCoordinates2,3)
+    // )
+    // bullDotsGeometry2.setAttribute(
+    //     'color',
+    //     new THREE.BufferAttribute(bullDotColors,3)
+    // )
 
-    bullDots2 = new THREE.Points(bullDotsGeometry2, pixleMaterial2)
+    // bullDots2 = new THREE.Points(bullDotsGeometry2, pixleMaterial2)
         
-    bullDots2.scale.set(3,3,3)
-    bullDots2.rotation.set(0, Math.PI, 0)
+    // bullDots2.scale.set(3,3,3)
+    // bullDots2.rotation.set(0, Math.PI, 0)
 
     // scene.add(bullDots2)
 
@@ -434,9 +451,10 @@ gltfLoader.load(
     bullDots.rotation.set(Math.PI*.43, Math.PI, 0)
     bullDots.position.set(0,13,-3.9)
     
-    
+    selectedDot = bullDots
+    selectChildIndex = 1
 
-        scene.add(bullDots)
+    scene.add(bullDots)
 
     
 
@@ -449,6 +467,8 @@ gltfLoader.load(
     (gltf) =>
     {
         birdModel = gltf.scene;
+
+        
         
     }
 )
@@ -457,6 +477,125 @@ gltfLoader.load(
     (gltf) =>
     {
         whaleModel = gltf.scene;
+        
+    }
+)
+
+gltfLoader.load(
+    '/bird.glb',
+    (gltf) =>
+    {
+        
+        let bird = gltf.scene;
+
+        console.log(bird)
+        
+        let birdDotCoordinates = bird.children[0].children[3].children[0].geometry.attributes.position.array;
+
+                //createbulldots 
+                const birdDotColors = new Float32Array(birdDotCoordinates.length * 3)
+                const colorInside = new THREE.Color('red')
+                const colorOutside = new THREE.Color('blue')
+                const colorInside2 = new THREE.Color('green')
+                const colorOutside2 = new THREE.Color('yellow')
+        
+                for(let i = 0; i < birdDotCoordinates.length; i++)
+            {
+            const i3 = i * 3
+            const mixedColor = colorInside.clone()  
+            mixedColor.lerp(colorOutside, bird.children[0].children[3].children[0].geometry.attributes.position.array[i3+1]/2+.5)
+            birdDotColors[i3    ] = mixedColor.r
+            birdDotColors[i3 + 1] = mixedColor.g
+            birdDotColors[i3 + 2] = mixedColor.b
+            }   
+
+
+        let pixleMaterial = new THREE.PointsMaterial({
+            // color:"red",
+            size:.3,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+            vertexColors: true
+        })
+        let birdDotsGeometry = new THREE.BufferGeometry;
+        
+        birdDotsGeometry.setAttribute(
+            'position',
+            new THREE.BufferAttribute(birdDotCoordinates,3)
+        )
+        birdDotsGeometry.setAttribute(
+            'color',
+            new THREE.BufferAttribute(birdDotColors,3)
+        )
+    
+        birdDots = new THREE.Points(birdDotsGeometry, pixleMaterial)
+            
+        birdDots.scale.set(2,2,2)
+        // birdDots.rotation.set(Math.PI*.43, Math.PI, 0)
+        birdDots.position.set(0,-7,-3.9)
+        
+        // scene.add(birdDots)
+
+        
+        
+    }
+)
+gltfLoader.load(
+    '/whale.glb',
+    (gltf) =>
+
+    
+    {
+        let whale = gltf.scene;
+
+        console.log(whale)
+        
+        let whaleDotCoordinates = whale.children[0].children[4].children[1].geometry.attributes.position.array;
+
+                //createbulldots 
+                const whaleDotColors = new Float32Array(whaleDotCoordinates.length * 3)
+                const colorInside = new THREE.Color('red')
+                const colorOutside = new THREE.Color('blue')
+                const colorInside2 = new THREE.Color('green')
+                const colorOutside2 = new THREE.Color('yellow')
+        
+                for(let i = 0; i < whaleDotCoordinates.length; i++)
+            {
+            const i3 = i * 3
+            const mixedColor = colorInside.clone()  
+            mixedColor.lerp(colorOutside, whale.children[0].children[4].children[1].geometry.attributes.position.array[i3+1]/2+.5)
+            whaleDotColors[i3    ] = mixedColor.r
+            whaleDotColors[i3 + 1] = mixedColor.g
+            whaleDotColors[i3 + 2] = mixedColor.b
+            }   
+        let pixleMaterial = new THREE.PointsMaterial({
+            // color:"red",
+            size:.3,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+            vertexColors: true
+        })
+        let whaleDotsGeometry = new THREE.BufferGeometry;
+        
+        whaleDotsGeometry.setAttribute(
+            'position',
+            new THREE.BufferAttribute(whaleDotCoordinates,3)
+        )
+        whaleDotsGeometry.setAttribute(
+            'color',
+            new THREE.BufferAttribute(whaleDotColors,3)
+        )
+    
+        whaleDots = new THREE.Points(whaleDotsGeometry, pixleMaterial)
+            
+        whaleDots.scale.set(3,3,3)
+        // whaleDots.rotation.set(Math.PI*.43, Math.PI, 0)
+        // whaleDots.position.set(0,13,-3.9)
+        
+        
+    
+            // scene.add(whaleDots)
+    
         
     }
 )
@@ -561,13 +700,10 @@ function followMouseZ(objects, model){
     console.log("followZ function")
     for(let i = 0; i<objects.length; i++){
         for(let j=0; j<objects[i].geometry.attributes.position.array.length; j++){
-
-
-             
+            
             if(objects[i].geometry.attributes.position.getZ(j)>=mouse.x*2 ){
         
                 objects[i].geometry.attributes.position.setZ(j,mouse.x*2+.2)
-            
             }
   
             else{
@@ -586,16 +722,10 @@ function returnToNormal(objects, model){
         for(let j=0; j<objects[i].geometry.attributes.position.array.length; j++){
 
 
-             
-          
-
                 objects[i].geometry.attributes.position.setX(j,model[i].geometry.attributes.position.getX(j))
                 objects[i].geometry.attributes.position.setY(j,model[i].geometry.attributes.position.getY(j))
 
                 objects[i].geometry.attributes.position.setZ(j,model[i].geometry.attributes.position.getZ(j))
-
-
-            
 
     }
 }  
@@ -621,7 +751,34 @@ var transformedSkinVertex = function (skin, index) {
     return result.applyMatrix4 (skin.bindMatrixInverse);
 };
 
+function controlVerts(dots, object){
 
+    // console.log("controlverts")
+    // console.log(dots)
+    // console.log("object")
+    // console.log(object)
+
+if(dots.geometry.attributes.position.array){
+    
+for(let i=0; i<dots.geometry.attributes.position.array.length/3; i++){
+    let vert = transformedSkinVertex(object, i)
+    // console.log(vert)
+
+    if(  dots.geometry.attributes.position.getZ(i)<object.geometry.attributes.position.getZ(i)+12&&i>2000&&i<3000){
+
+        dots.geometry.attributes.position.setZ(i,dots.geometry.attributes.position.getZ(i)+.1)
+        dots.geometry.attributes.position.setY(i,dots.geometry.attributes.position.getY(i)-.1
+        )
+    }
+    else{
+    dots.geometry.attributes.position.setY(i,vert.y)
+    dots.geometry.attributes.position.setX(i,vert.x)
+    dots.geometry.attributes.position.setZ(i,vert.z)
+    }
+
+}
+}
+}
 
 let oldElapsedTime=null;
 
@@ -670,103 +827,37 @@ const tick = () =>
         
         
 
-    if(bull && bullDots &&bullDots2){
+    if(bull && bullDots &&bird&&birdDots&&whale&&whaleDots &&selectedDot &&selectedObject){
 
-        for(let i=0; i<bullDots.geometry.attributes.position.array.length/3; i++){
-            let vert = transformedSkinVertex(bull.children[0].children[4].children[1], i)
-            bullDots.geometry.attributes.position.setY(i,vert.y)
-            bullDots.geometry.attributes.position.setX(i,vert.x)
-            bullDots.geometry.attributes.position.setZ(i,vert.z)
+      controlVerts(selectedDot, selectedObject[selectChildIndex])
+
+      bull.children[0].children[4].children[0].geometry.attributes.position.needsUpdate = true;
+      bull.children[0].children[4].children[1].geometry.attributes.position.needsUpdate = true;
+      bull.children[0].children[4].children[2].geometry.attributes.position.needsUpdate = true;
+      whale.children[0].children[4].children[0].geometry.attributes.position.needsUpdate = true;
+      whale.children[0].children[4].children[1].geometry.attributes.position.needsUpdate = true;
+      whale.children[0].children[4].children[2].geometry.attributes.position.needsUpdate = true;
+      bird.children[0].children[3].children[0].geometry.attributes.position.needsUpdate = true;
+      bird.children[0].children[3].children[1].geometry.attributes.position.needsUpdate = true;
+      bird.children[0].children[3].children[2].geometry.attributes.position.needsUpdate = true;
+
+      bullDots.geometry.attributes.position.needsUpdate = true;
+      birdDots.geometry.attributes.position.needsUpdate = true;
+
+      whaleDots.geometry.attributes.position.needsUpdate = true;
 
 
-        //     bullDots.geometry.attributes.skinIndex
-        //     if(  bullDots.geometry.attributes.position.getZ(i)<bullModel.children[0].children[4].children[0].geometry.attributes.position.getZ(i)+12){
+        }
 
-        //         bullDots.geometry.attributes.position.setZ(i,bullDots.geometry.attributes.position.getZ(i)+.1)
-        //         bullDots.geometry.attributes.position.setY(i,bullDots.geometry.attributes.position.getY(i)+.05
-        //         )
-
- 
-        // }
-        // else{
-        //     bullDots.geometry.attributes.position.setZ(i, bullModel.children[0].children[4].children[1].geometry.attributes.position.getZ(i))
-        //     bullDots.geometry.attributes.position.setY(i, bullModel.children[0].children[4].children[1].geometry.attributes.position.getY(i))
-
-        // }
-
-    }
-
-    // for(let i=0; i<100; i++){
-    //     if(  bullDots2.geometry.attributes.position.getZ(i)<bullModel.children[0].children[4].children[1].geometry.attributes.position.getZ(i)+12){
-
-    //         bullDots2.geometry.attributes.position.setZ(i,bullDots2.geometry.attributes.position.getZ(i)+.1)
-
-    // }
-    // else{
-    //     bullDots2.geometry.attributes.position.setZ(i, bullModel.children[0].children[4].children[0].geometry.attributes.position.getZ(i))
-    // }
-
-// }
-     
-
-        bull.children[0].children[4].children[0].geometry.attributes.position.needsUpdate = true;
-        bull.children[0].children[4].children[1].geometry.attributes.position.needsUpdate = true;
-        bull.children[0].children[4].children[2].geometry.attributes.position.needsUpdate = true;
-        whale.children[0].children[4].children[0].geometry.attributes.position.needsUpdate = true;
-        whale.children[0].children[4].children[1].geometry.attributes.position.needsUpdate = true;
-        whale.children[0].children[4].children[2].geometry.attributes.position.needsUpdate = true;
-        bird.children[0].children[3].children[0].geometry.attributes.position.needsUpdate = true;
-        bird.children[0].children[3].children[1].geometry.attributes.position.needsUpdate = true;
-        bird.children[0].children[3].children[2].geometry.attributes.position.needsUpdate = true;
-
-        bullDots.geometry.attributes.position.needsUpdate = true;
-        bullDots2.geometry.attributes.position.needsUpdate = true;
+      
+        // bullDots2.geometry.attributes.position.needsUpdate = true;
 
         
 
 
 
-    }
+    
 
-    // if(bird){
-        
-
-    //     for(let i=0; i<bird.children[0].children[3].children[0].geometry.attributes.position.array.length; i++){
-
-    //         if(birdModel.children[0].children[3].children[0].geometry.attributes.position.getZ(i)>0){
-                
-    //         bird.children[0].children[3].children[0].geometry.attributes.position.setZ(i,1)
-    //         }
-    //         else{
-    //             bird.children[0].children[3].children[0].geometry.attributes.position.setZ(i,.99)
-
-    //         }
-
-    //     }
-    //     for(let i=0; i<bird.children[0].children[3].children[1].geometry.attributes.position.array.length; i++){
-
-    //         if(birdModel.children[0].children[3].children[1].geometry.attributes.position.getZ(i)>0){
-                
-    //         bird.children[0].children[3].children[1].geometry.attributes.position.setZ(i,1)
-    //         }
-    //         else{
-    //             bird.children[0].children[3].children[1].geometry.attributes.position.setZ(i,.98)
-
-    //         }
-
-    //     }
-    //     for(let i=0; i<bird.children[0].children[3].children[2].geometry.attributes.position.array.length; i++){
-
-    //         if(birdModel.children[0].children[3].children[2].geometry.attributes.position.getZ(i)>1){
-                
-    //         bird.children[0].children[3].children[1].geometry.attributes.position.setZ(i,1)
-    //         }
-    //         else{
-    //             bird.children[0].children[3].children[1].geometry.attributes.position.setZ(i,.98)
-
-    //         }
-
-    //     }
 
     }
 
