@@ -386,7 +386,7 @@ gltfLoader.load(
         //createbulldots 
         const bullDotColors = new Float32Array(bullDotCoordinates.length * 3)
         const colorInside = new THREE.Color('red')
-        const colorOutside = new THREE.Color('blue')
+        const colorOutside = new THREE.Color('orange')
         const colorInside2 = new THREE.Color('green')
         const colorOutside2 = new THREE.Color('yellow')
 
@@ -401,7 +401,7 @@ gltfLoader.load(
     }   
 
     let pixleMaterial = new THREE.PointsMaterial({
-        color:"red",
+        // color:"red",
         size:.3,
         depthWrite: false,
         blending: THREE.AdditiveBlending,
@@ -554,7 +554,7 @@ gltfLoader.load(
 
                 //createbulldots 
                 const whaleDotColors = new Float32Array(whaleDotCoordinates.length * 3)
-                const colorInside = new THREE.Color('red')
+                const colorInside = new THREE.Color('pink')
                 const colorOutside = new THREE.Color('blue')
                 const colorInside2 = new THREE.Color('green')
                 const colorOutside2 = new THREE.Color('yellow')
@@ -618,7 +618,7 @@ scene.add(directionalLight)
  * Camera
  */
 // Base camera
-const camera = new THREE.PerspectiveCamera(50, sizes.width / sizes.height, 0.1, 100)
+const camera = new THREE.PerspectiveCamera(50, sizes.width / sizes.height, 0.1, 1000)
 if(sizes.width>860){
 camera.position.set(0, 0, 60)
 }
@@ -660,8 +660,8 @@ function followMouseX(objects, model){
      for(let i = 0; i<objects.length; i++){
 
         for(let j=0; j<objects[i].geometry.attributes.position.array.length; j++){
-            if(objects[i].geometry.attributes.position.getX(j)>=mouse.x*2 ){
-                objects[i].geometry.attributes.position.setX(j,mouse.x*2+.2)
+            if(objects[i].geometry.attributes.position.getX(j)>=mouse.x*9 ){
+                objects[i].geometry.attributes.position.setX(j,mouse.x*9+.2)
             }
           
             else{
@@ -680,9 +680,9 @@ function followMouseY(objects, model){
 
 
              
-            if(objects[i].geometry.attributes.position.getY(j)>=mouse.y*2 ){
+            if(objects[i].geometry.attributes.position.getY(j)>=mouse.y*6 ){
         
-                objects[i].geometry.attributes.position.setY(j,mouse.y*2+.2)
+                objects[i].geometry.attributes.position.setY(j,mouse.y*6+.2)
             
             }
   
@@ -701,9 +701,9 @@ function followMouseZ(objects, model){
     for(let i = 0; i<objects.length; i++){
         for(let j=0; j<objects[i].geometry.attributes.position.array.length; j++){
             
-            if(objects[i].geometry.attributes.position.getZ(j)>=mouse.x*2 ){
+            if(objects[i].geometry.attributes.position.getZ(j)>=mouse.x*7 ){
         
-                objects[i].geometry.attributes.position.setZ(j,mouse.x*2+.2)
+                objects[i].geometry.attributes.position.setZ(j,mouse.x*7+.2)
             }
   
             else{
@@ -764,7 +764,7 @@ for(let i=0; i<dots.geometry.attributes.position.array.length/3; i++){
     let vert = transformedSkinVertex(object, i)
     // console.log(vert)
 
-    if(  dots.geometry.attributes.position.getZ(i)<object.geometry.attributes.position.getZ(i)+12&&i>2000&&i<3000){
+    if(  dots.geometry.attributes.position.getZ(i)<object.geometry.attributes.position.getZ(i)+5&&i>2000&&i<3000){
 
         dots.geometry.attributes.position.setZ(i,dots.geometry.attributes.position.getZ(i)+.1)
         dots.geometry.attributes.position.setY(i,dots.geometry.attributes.position.getY(i)-.1
